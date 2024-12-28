@@ -1,11 +1,20 @@
 spring:
   application:
     name: employee_demo
+    security:
+      jwt:
+        access_token:
+          secret: ${JWT_ACCESS_TOKEN_SECRET}
+          expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+        refresh_token:
+          secret: ${JWT_REFRESH_TOKEN_SECRET}
+          expiration: ${JWT_REFRESH_TOKEN_EXPIRATION}
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/employee_fa
-    username: postgres
-    password: Abc@12345
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
 
   jpa:
     hibernate:

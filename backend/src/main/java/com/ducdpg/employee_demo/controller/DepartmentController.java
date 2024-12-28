@@ -1,27 +1,24 @@
 package com.ducdpg.employee_demo.controller;
 
-import com.ducdpg.employee_demo.entity.Department;
 import com.ducdpg.employee_demo.models.ResponseModel;
 import com.ducdpg.employee_demo.models.department.DepartmentCreateModel;
 import com.ducdpg.employee_demo.models.department.DepartmentModel;
 import com.ducdpg.employee_demo.models.department.DepartmentUpdateModel;
-import com.ducdpg.employee_demo.models.employee.EmployeeCreateModel;
-import com.ducdpg.employee_demo.models.employee.EmployeeModel;
 import com.ducdpg.employee_demo.services.IDepartmentService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/departments")
+@RequiredArgsConstructor
+@Validated
 public class DepartmentController {
-
-    public DepartmentController(IDepartmentService departmentService) {
-        this.departmentService = departmentService;
-    }
 
     private final IDepartmentService departmentService;
 
@@ -71,7 +68,7 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createDepartment(@RequestBody DepartmentCreateModel departmentModel) {
+    public ResponseEntity<?> createDepartment(@Valid @RequestBody DepartmentCreateModel departmentModel) {
         try {
             DepartmentModel result = departmentService.save(departmentModel);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseModel(
@@ -90,7 +87,7 @@ public class DepartmentController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateDepartment(@RequestBody DepartmentUpdateModel departmentModel) {
+    public ResponseEntity<?> updateDepartment(@Valid @RequestBody DepartmentUpdateModel departmentModel) {
         try {
             DepartmentModel result = departmentService.update(departmentModel);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(

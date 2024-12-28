@@ -7,6 +7,7 @@ import com.ducdpg.employee_demo.models.department.DepartmentModel;
 import com.ducdpg.employee_demo.models.department.DepartmentUpdateModel;
 import com.ducdpg.employee_demo.repositories.DepartmentRepository;
 import com.ducdpg.employee_demo.services.IDepartmentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DepartmentService implements IDepartmentService {
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private DepartmentMapper departmentMapper;
+    private final DepartmentRepository departmentRepository;
+    private final DepartmentMapper departmentMapper;
 
     @Override
     public List<DepartmentModel> getAll() {

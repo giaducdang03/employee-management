@@ -9,6 +9,7 @@ import com.ducdpg.employee_demo.models.employee.EmployeeUpdateModel;
 import com.ducdpg.employee_demo.repositories.DepartmentRepository;
 import com.ducdpg.employee_demo.repositories.EmployeeRepository;
 import com.ducdpg.employee_demo.services.IEmployeeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +18,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
 
-    @Autowired
-    private EmployeeMapper employeeMapper;
+    private final EmployeeMapper employeeMapper;
 
     @Override
     public List<EmployeeModel> getAll() {
