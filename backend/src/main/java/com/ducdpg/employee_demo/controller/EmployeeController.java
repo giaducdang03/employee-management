@@ -11,6 +11,7 @@ import com.ducdpg.employee_demo.services.IEmployeeService;
 import com.ducdpg.employee_demo.services.imp.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,9 +29,10 @@ public class EmployeeController {
     private final IEmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<?> getAllEmployees() {
+    public ResponseEntity<?> getAllEmployees(@RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "10") int size) {
         try {
-            List<EmployeeModel> employeeList = employeeService.getAll();
+            Page<EmployeeModel> employeeList = employeeService.getAll(page, size);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(
                     200,
                     employeeList,

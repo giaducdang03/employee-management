@@ -5,6 +5,7 @@ import com.ducdpg.employee_demo.models.employee.EmployeeCreateModel;
 import com.ducdpg.employee_demo.models.employee.EmployeeModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +20,5 @@ public interface EmployeeMapper {
     Employee toEmployeeEntity(EmployeeModel employeeModel);
 
     List<EmployeeModel> toEmployeeModelList(List<Employee> employees);
+
 }

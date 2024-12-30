@@ -11,6 +11,9 @@ import com.ducdpg.employee_demo.repositories.EmployeeRepository;
 import com.ducdpg.employee_demo.services.IEmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,9 +31,10 @@ public class EmployeeService implements IEmployeeService {
     private final EmployeeMapper employeeMapper;
 
     @Override
-    public List<EmployeeModel> getAll() {
-        List<Employee> employeeList = employeeRepository.findAll();
-        return employeeMapper.toEmployeeModelList(employeeList);
+    public Page<EmployeeModel> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Employee> employeePage = employeeRepository.findAll(pageable);
+        return employeePage.map(employeeMapper::toEmployeeModel);
     }
 
     @Override
