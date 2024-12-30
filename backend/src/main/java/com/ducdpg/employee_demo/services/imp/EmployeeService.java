@@ -9,11 +9,14 @@ import com.ducdpg.employee_demo.models.employee.EmployeeUpdateModel;
 import com.ducdpg.employee_demo.repositories.DepartmentRepository;
 import com.ducdpg.employee_demo.repositories.EmployeeRepository;
 import com.ducdpg.employee_demo.services.IEmployeeService;
+import com.ducdpg.employee_demo.specification.GenericSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,9 +34,17 @@ public class EmployeeService implements IEmployeeService {
     private final EmployeeMapper employeeMapper;
 
     @Override
-    public Page<EmployeeModel> getAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Employee> employeePage = employeeRepository.findAll(pageable);
+    public Page<EmployeeModel> getAll(int page, int size, String departmentId, String fullName, String[] sort) {
+
+        // create sort object
+        Sort.Direction direction = Sort.Direction.fromString(sort[1]);
+        Sort sortObj = Sort.by(direction, sort[0]);
+
+        // search
+        Specification<Employee> spec = buildSpecification(departmentId, fullName);
+
+        Pageable pageable = PageRequest.of(page - 1, size, sortObj);
+        Page<Employee> employeePage = employeeRepository.findAll(spec, pageable);
         return employeePage.map(employeeMapper::toEmployeeModel);
     }
 
@@ -117,5 +128,15 @@ public class EmployeeService implements IEmployeeService {
         }
         deleteEmployee.isDelete = true;
         employeeRepository.save(deleteEmployee);
+    }
+
+    private Specification<Employee> buildSpecification(String departmentId,
+                                                       String fullName) {
+        Specification<Employee> spec = Specification.where(null);
+
+        spec = GenericSpecification.addSpecification(spec, departmentId, "department.id", "equal");
+        spec = GenericSpecification.addSpecification(spec, fullName, "fullName", "like");
+
+        return spec;
     }
 }

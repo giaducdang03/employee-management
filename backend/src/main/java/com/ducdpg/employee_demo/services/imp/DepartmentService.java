@@ -9,6 +9,9 @@ import com.ducdpg.employee_demo.repositories.DepartmentRepository;
 import com.ducdpg.employee_demo.services.IDepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,9 +26,12 @@ public class DepartmentService implements IDepartmentService {
     private final DepartmentMapper departmentMapper;
 
     @Override
-    public List<DepartmentModel> getAll() {
-        List<Department> departmentList = departmentRepository.findAll();
-        return departmentMapper.toDepartmentModelList(departmentList);
+    public Page<DepartmentModel> getAll(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Department> departmentPage = departmentRepository.findAll(pageable);
+        return departmentPage.map(departmentMapper::toDepartmentModel);
     }
 
     @Override

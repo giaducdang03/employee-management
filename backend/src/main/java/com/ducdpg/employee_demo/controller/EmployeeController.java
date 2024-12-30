@@ -12,6 +12,7 @@ import com.ducdpg.employee_demo.services.imp.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,9 +31,12 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<?> getAllEmployees(@RequestParam(defaultValue = "1") int page,
-                                             @RequestParam(defaultValue = "10") int size) {
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) String departmentId,
+                                             @RequestParam(required = false) String fullName,
+                                             @RequestParam(required = false) String[] sort) {
         try {
-            Page<EmployeeModel> employeeList = employeeService.getAll(page, size);
+            Page<EmployeeModel> employeeList = employeeService.getAll(page, size, departmentId, fullName, sort);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(
                     200,
                     employeeList,

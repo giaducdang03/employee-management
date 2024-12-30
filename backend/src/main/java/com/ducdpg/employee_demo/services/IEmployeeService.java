@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IEmployeeService {
-    Page<EmployeeModel> getAll(int page, int size);
+    Page<EmployeeModel> getAll(int page, int size, String departmentId, String name, String[] sort);
     EmployeeModel getById(String id);
     EmployeeModel save(EmployeeCreateModel employee);
     EmployeeModel update(EmployeeUpdateModel employee);

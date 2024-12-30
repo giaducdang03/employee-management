@@ -7,6 +7,7 @@ import com.ducdpg.employee_demo.models.department.DepartmentUpdateModel;
 import com.ducdpg.employee_demo.services.IDepartmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,9 +24,10 @@ public class DepartmentController {
     private final IDepartmentService departmentService;
 
     @GetMapping
-    public ResponseEntity<?> getAllDepartments() {
+    public ResponseEntity<?> getAllDepartments(@RequestParam(defaultValue = "1") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
         try {
-            List<DepartmentModel> listDepartment = departmentService.getAll();
+            Page<DepartmentModel> listDepartment = departmentService.getAll(page, size);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(
                     200,
                     listDepartment,
