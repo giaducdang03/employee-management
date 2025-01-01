@@ -9,7 +9,14 @@ import com.ducdpg.employee_demo.models.employee.EmployeeUpdateModel;
 import com.ducdpg.employee_demo.repositories.DepartmentRepository;
 import com.ducdpg.employee_demo.repositories.EmployeeRepository;
 import com.ducdpg.employee_demo.services.IEmployeeService;
+import com.ducdpg.employee_demo.specification.GenericSpecification;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,21 +24,32 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeeService implements IEmployeeService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
 
-    @Autowired
-    private EmployeeMapper employeeMapper;
+    private final EmployeeMapper employeeMapper;
 
     @Override
-    public List<EmployeeModel> getAll() {
-        List<Employee> employeeList = employeeRepository.findAll();
-        return employeeMapper.toEmployeeModelList(employeeList);
+    public Page<EmployeeModel> getAll(int page, int size, String departmentId, String fullName, String[] sort) {
+
+        if (sort != null) {
+            // create sort object
+            Sort.Direction direction = Sort.Direction.fromString(sort[1]);
+            Sort sortObj = Sort.by(direction, sort[0]);
+
+            Pageable pageable = PageRequest.of(page - 1, size, sortObj);
+        }
+
+        // search
+        Specification<Employee> spec = buildSpecification(departmentId, fullName, false);
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Employee> employeePage = employeeRepository.findAll(spec, pageable);
+        return employeePage.map(employeeMapper::toEmployeeModel);
     }
 
     @Override
@@ -114,5 +132,16 @@ public class EmployeeService implements IEmployeeService {
         }
         deleteEmployee.isDelete = true;
         employeeRepository.save(deleteEmployee);
+    }
+
+    private Specification<Employee> buildSpecification(String departmentId,
+                                                       String fullName, boolean isDelete) {
+        Specification<Employee> spec = Specification.where(null);
+
+        spec = GenericSpecification.addSpecification(spec, departmentId, "department.id", "equal");
+        spec = GenericSpecification.addSpecification(spec, fullName, "fullName", "like");
+        spec = GenericSpecification.addSpecification(spec, isDelete, "isDelete", "equal");
+
+        return spec;
     }
 }

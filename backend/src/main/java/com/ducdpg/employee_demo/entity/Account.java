@@ -6,8 +6,12 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,19 +22,19 @@ import java.time.LocalDateTime;
 @Setter
 @Table(name = "account")
 @EntityListeners(AuditingEntityListener.class)
-public class Account {
+public class Account implements UserDetails {
 
     @Column(name = "email", length = 150, nullable = false, unique = true)
-    private String email;
+    public String email;
 
     @Column(name = "password", length = 500, nullable = false)
-    private String password;
+    public String password;
 
     @Column(name = "full_name", length = 150, nullable = false)
-    private String fullName;
+    public String fullName;
 
     @Column(name = "phone_number", length = 10, nullable = false)
-    private String phoneNumber;
+    public String phoneNumber;
 
     @Id
     @UuidGenerator(style = UuidGenerator.Style.TIME)
@@ -41,9 +45,39 @@ public class Account {
     public LocalDateTime createdDate;
 
     @LastModifiedBy
-    @Column(name = "updated_date", updatable = false)
+    @Column(name = "updated_date")
     public LocalDateTime updatedDate;
 
     @Column(name = "is_delete", nullable = false)
     public boolean isDelete;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !isDelete;
+    }
 }

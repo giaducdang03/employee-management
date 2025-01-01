@@ -7,7 +7,11 @@ import com.ducdpg.employee_demo.models.department.DepartmentModel;
 import com.ducdpg.employee_demo.models.department.DepartmentUpdateModel;
 import com.ducdpg.employee_demo.repositories.DepartmentRepository;
 import com.ducdpg.employee_demo.services.IDepartmentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,18 +19,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DepartmentService implements IDepartmentService {
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
-    @Autowired
-    private DepartmentMapper departmentMapper;
+    private final DepartmentRepository departmentRepository;
+    private final DepartmentMapper departmentMapper;
 
     @Override
-    public List<DepartmentModel> getAll() {
-        List<Department> departmentList = departmentRepository.findAll();
-        return departmentMapper.toDepartmentModelList(departmentList);
+    public Page<DepartmentModel> getAll(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Department> departmentPage = departmentRepository.findAll(pageable);
+        return departmentPage.map(departmentMapper::toDepartmentModel);
     }
 
     @Override
@@ -60,14 +65,14 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public DepartmentModel update(DepartmentUpdateModel department) {
         // check update department
-        Department existedDepartment = departmentRepository.findByName(department.getId());
+        Department existedDepartment = departmentRepository.findById(department.getId()).get();
         if (existedDepartment == null) {
             throw new RuntimeException("Department not exist");
         }
 
         // check name exist department
         Department existedNameDepartment = departmentRepository.findByName(department.getName());
-        if (existedNameDepartment != null) {
+        if (existedNameDepartment != null && !existedNameDepartment.getId().equals(department.getId())) {
             throw new RuntimeException("Department name already exist");
         }
 

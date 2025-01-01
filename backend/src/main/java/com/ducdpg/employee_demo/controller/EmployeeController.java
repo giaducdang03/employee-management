@@ -9,8 +9,13 @@ import com.ducdpg.employee_demo.models.employee.EmployeeUpdateModel;
 import com.ducdpg.employee_demo.services.IDepartmentService;
 import com.ducdpg.employee_demo.services.IEmployeeService;
 import com.ducdpg.employee_demo.services.imp.EmployeeService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,18 +23,20 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/employees")
+@RequiredArgsConstructor
+@Validated
 public class EmployeeController {
-
-    public EmployeeController(IEmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
 
     private final IEmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<?> getAllEmployees() {
+    public ResponseEntity<?> getAllEmployees(@RequestParam(defaultValue = "1") int page,
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @RequestParam(required = false) String departmentId,
+                                             @RequestParam(required = false) String fullName,
+                                             @RequestParam(required = false) String[] sort) {
         try {
-            List<EmployeeModel> employeeList = employeeService.getAll();
+            Page<EmployeeModel> employeeList = employeeService.getAll(page, size, departmentId, fullName, sort);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(
                     200,
                     employeeList,
@@ -46,7 +53,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createEmployee(@RequestBody EmployeeCreateModel employeeModel) {
+    public ResponseEntity<?> createEmployee(@Valid @RequestBody EmployeeCreateModel employeeModel) {
         try {
             EmployeeModel result = employeeService.save(employeeModel);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseModel(
@@ -91,7 +98,7 @@ public class EmployeeController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateEnmloyee(@RequestBody EmployeeUpdateModel employeeModel) {
+    public ResponseEntity<?> updateEmployee(@Valid @RequestBody EmployeeUpdateModel employeeModel) {
         try {
             EmployeeModel result = employeeService.update(employeeModel);
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(

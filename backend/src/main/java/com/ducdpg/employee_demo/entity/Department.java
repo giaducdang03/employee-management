@@ -40,7 +40,7 @@ public class Department {
     public LocalDateTime createdDate;
 
     @LastModifiedBy
-    @Column(name = "updated_date", updatable = false)
+    @Column(name = "updated_date")
     public LocalDateTime updatedDate;
 
     @Column(name = "is_delete", nullable = false)
