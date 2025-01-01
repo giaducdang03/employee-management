@@ -159,7 +159,7 @@ const DepartmentList = () => {
             <div>{/* <ExportButton /> */}</div>
             <div>
               <Button type="primary" onClick={() => setIsOpen(true)}>
-                + Add Department
+                + Add
               </Button>
             </div>
           </div>

@@ -210,7 +210,7 @@ const EmployeeList = () => {
             <div>{/* <ExportButton /> */}</div>
             <div>
               <Button type="primary" onClick={() => setIsOpen(true)}>
-                + Add Employee
+                + Add
               </Button>
             </div>
           </div>
