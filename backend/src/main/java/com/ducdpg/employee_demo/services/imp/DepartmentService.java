@@ -65,14 +65,14 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public DepartmentModel update(DepartmentUpdateModel department) {
         // check update department
-        Department existedDepartment = departmentRepository.findByName(department.getId());
+        Department existedDepartment = departmentRepository.findById(department.getId()).get();
         if (existedDepartment == null) {
             throw new RuntimeException("Department not exist");
         }
 
         // check name exist department
         Department existedNameDepartment = departmentRepository.findByName(department.getName());
-        if (existedNameDepartment != null) {
+        if (existedNameDepartment != null && !existedNameDepartment.getId().equals(department.getId())) {
             throw new RuntimeException("Department name already exist");
         }
 

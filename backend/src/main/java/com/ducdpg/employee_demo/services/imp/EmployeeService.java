@@ -36,14 +36,18 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public Page<EmployeeModel> getAll(int page, int size, String departmentId, String fullName, String[] sort) {
 
-        // create sort object
-        Sort.Direction direction = Sort.Direction.fromString(sort[1]);
-        Sort sortObj = Sort.by(direction, sort[0]);
+        if (sort != null) {
+            // create sort object
+            Sort.Direction direction = Sort.Direction.fromString(sort[1]);
+            Sort sortObj = Sort.by(direction, sort[0]);
+
+            Pageable pageable = PageRequest.of(page - 1, size, sortObj);
+        }
 
         // search
-        Specification<Employee> spec = buildSpecification(departmentId, fullName);
+        Specification<Employee> spec = buildSpecification(departmentId, fullName, false);
 
-        Pageable pageable = PageRequest.of(page - 1, size, sortObj);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<Employee> employeePage = employeeRepository.findAll(spec, pageable);
         return employeePage.map(employeeMapper::toEmployeeModel);
     }
@@ -131,11 +135,12 @@ public class EmployeeService implements IEmployeeService {
     }
 
     private Specification<Employee> buildSpecification(String departmentId,
-                                                       String fullName) {
+                                                       String fullName, boolean isDelete) {
         Specification<Employee> spec = Specification.where(null);
 
         spec = GenericSpecification.addSpecification(spec, departmentId, "department.id", "equal");
         spec = GenericSpecification.addSpecification(spec, fullName, "fullName", "like");
+        spec = GenericSpecification.addSpecification(spec, isDelete, "isDelete", "equal");
 
         return spec;
     }

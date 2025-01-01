@@ -33,6 +33,8 @@ public class EmployeeModel {
 
     public String departmentName;
 
+    public String departmentId;
+
     public LocalDateTime createdDate;
 
     public LocalDateTime updatedDate;

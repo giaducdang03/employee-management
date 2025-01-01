@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface EmployeeMapper {
 
     @Mapping(source = "department.name", target = "departmentName") // Maps department's name
+    @Mapping(source = "department.id", target = "departmentId")
     EmployeeModel toEmployeeModel(Employee employee);
 
     @Mapping(source = "departmentName", target = "department.name")
