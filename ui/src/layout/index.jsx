@@ -43,8 +43,8 @@ const DashboardLayout = ({ children }) => {
   const defaultSelectedKeys = resetDefaultSelectedKeys();
 
   const items = [
-    getItem("Nhân viên", "1", <UsergroupAddOutlined />, null, "/employee"),
-    getItem("Phòng ban", "2", <BuildOutlined />, null, "department"),
+    getItem("Employee", "1", <UsergroupAddOutlined />, null, "/employee"),
+    getItem("Department", "2", <BuildOutlined />, null, "department"),
   ];
 
   const renderMenuItems = (items) => {
